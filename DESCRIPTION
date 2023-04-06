@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Robert Lennox
 Maintainer: The package maintainer <lennox@dal.ca>
 Description: Helper functions for managing data for the Bergen Telemetry Network
-License: CC-By
+License: CC0
 Encoding: UTF-8
 LazyData: true
 Suggests: 
