@@ -19,7 +19,7 @@ Imports:
     googlesheets4,
     lubridate,
     magrittr,
-    RSQLite
+    RSQLite,
     beepr,
     sf,
     tidyr
