@@ -6,7 +6,7 @@
 
 require(tidyverse)
 
-theme_set(theme_classic()+
+ggplot2::theme_set(theme_classic()+
             theme(text=element_text(size=20),
                   axis.text=element_text(colour="black"),
                   legend.position="top",
