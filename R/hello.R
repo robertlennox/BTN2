@@ -1,22 +1,14 @@
-#libraries needed:
-#data.table
-#DBI
-
-#function assumes datetime in logs is in UTC
-
-usethis::use_package("usethis")
-usethis::use_package("ggplot2")
-usethis::use_package("magrittr")
-usethis::use_package("lubridate")
-usethis::use_package("googlesheets4")
-usethis::use_package("sf")
-usethis::use_package("dplyr")
-usethis::use_package("data.table")
-usethis::use_package("RSQLite")
-usethis::use_package("DBI")
-
+#'
+#' function to read in and manipulate Thelma DB
+#'
+#' @param tbdb_file is the name of the thelma database
+#' @export
 
 read_tb = function(tbdb_file) {
+  tbrSerialNo <- tagID <- epo <- frac <- usTimestamp <- tagSNR <- NULL
+  temperature <- tbrSerialNo <- ambientNoise <- ambientNoisePeak <- secTimestampUTC  <- NULL
+  tagData <- dt_utc <- dt_sec_utc  <- NULL
+
 
   con = DBI::dbConnect(RSQLite::SQLite(), dbname = tbdb_file)
 
@@ -45,17 +37,18 @@ read_tb = function(tbdb_file) {
   DBI::dbDisconnect(con)
 
   dets<- detections %>%
-   dplyr::mutate(dt=lubridate::with_tz(dt_utc, "Europe/Oslo")) %>%
-    dplyr::select(dt, dt_utc, epo, frac, serial, ID, Data) %>%
-    dplyr::mutate(dti=lubridate::round_date(dt, "10 mins")) %>%
+   dplyr::mutate(dt=lubridate::with_tz(.data$dt_utc, "Europe/Oslo")) %>%
+    dplyr::select(.data$dt, .data$dt_utc, .data$epo, .data$frac,
+                  .data$serial, .data$ID, .data$Data) %>%
+    dplyr::mutate(dti=lubridate::round_date(.data$dt, "10 mins")) %>%
     dplyr::left_join(sensors %>%
                        tidyr::as_tibble %>%
-                       dplyr::mutate(dt=lubridate::with_tz(dt_utc, "Europe/Oslo")) %>%
-                       dplyr::select(dt, serial, temperature, noise) %>%
-                       dplyr::mutate(dti=round_date(dt, "10 mins")) %>%
-                       dplyr::select(-dt),
+                       dplyr::mutate(dt=lubridate::with_tz(.data$dt_utc, "Europe/Oslo")) %>%
+                       dplyr::select(.data$dt, .data$serial, .data$temperature, .data$noise) %>%
+                       dplyr::mutate(dti=lubridate::round_date(.data$dt, "10 mins")) %>%
+                       dplyr::select(-.data$dt),
                      by=c("dti", "serial")) %>%
-    dplyr::select(-dti)
+    dplyr::select(-.data$dti)
   list(d=dets)
 
 }

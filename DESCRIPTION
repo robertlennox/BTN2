@@ -1,12 +1,11 @@
 Package: BTN
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Functions for handling acoutic telemetry data from the Bergen Telemetry Network
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Robert Lennox
+Maintainer: The package maintainer <lennox@dal.ca>
+Description: Helper functions for managing data for the Bergen Telemetry Network
+License: CC-By
 Encoding: UTF-8
 LazyData: true
 Suggests: 
@@ -14,6 +13,7 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     data.table,
+    DBI,
     dplyr,
     ggplot2,
     googlesheets4,
@@ -21,6 +21,7 @@ Imports:
     magrittr,
     RSQLite,
     sf,
-    usethis
+    tidyr
 URL: https://github.com/robertlennox/BTN
 BugReports: https://github.com/robertlennox/BTN/issues
+RoxygenNote: 7.2.3
