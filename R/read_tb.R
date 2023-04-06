@@ -4,6 +4,7 @@
 #' @import data.table
 #' @import magrittr
 #' @import dplyr
+#' @import tidyr
 #' @param tbdb_file is the name of the thelma database
 #' @export
 
@@ -45,7 +46,6 @@ read_tb = function(tbdb_file) {
                   .data$serial, .data$ID, .data$Data) %>%
     dplyr::mutate(dti=lubridate::round_date(.data$dt, "10 mins")) %>%
     dplyr::left_join(sensors %>%
-                       tidyr::as_tibble %>%
                        dplyr::mutate(dt=lubridate::with_tz(.data$dt_utc, "Europe/Oslo")) %>%
                        dplyr::select(.data$dt, .data$serial, .data$temperature, .data$noise) %>%
                        dplyr::mutate(dti=lubridate::round_date(.data$dt, "10 mins")) %>%
