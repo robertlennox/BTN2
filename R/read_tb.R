@@ -2,6 +2,7 @@
 #' function to read in and manipulate Thelma DB
 #'
 #' @import data.table
+#' @import magrittr
 #' @param tbdb_file is the name of the thelma database
 #' @export
 
