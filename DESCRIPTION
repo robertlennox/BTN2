@@ -22,3 +22,5 @@ Imports:
     RSQLite,
     sf,
     usethis
+URL: https://github.com/robertlennox/BTN
+BugReports: https://github.com/robertlennox/BTN/issues
