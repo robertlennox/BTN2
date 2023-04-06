@@ -3,6 +3,7 @@
 #'
 #' @import data.table
 #' @import magrittr
+#' @import dplyr
 #' @param tbdb_file is the name of the thelma database
 #' @export
 
