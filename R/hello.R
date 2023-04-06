@@ -13,6 +13,8 @@ usethis::use_package("sf")
 usethis::use_package("dplyr")
 usethis::use_package("data.table")
 usethis::use_package("RSQLite")
+usethis::use_package("DBI")
+
 
 read_tb = function(tbdb_file) {
 
@@ -43,12 +45,12 @@ read_tb = function(tbdb_file) {
   DBI::dbDisconnect(con)
 
   dets<- detections %>%
-    mutate(dt=lubridate::with_tz(dt_utc, "Europe/Oslo")) %>%
+   dplyr::mutate(dt=lubridate::with_tz(dt_utc, "Europe/Oslo")) %>%
     dplyr::select(dt, dt_utc, epo, frac, serial, ID, Data) %>%
-    dplyr::mutate(dti=round_date(dt, "10 mins")) %>%
+    dplyr::mutate(dti=lubridate::round_date(dt, "10 mins")) %>%
     dplyr::left_join(sensors %>%
-                       as_tibble %>%
-                       dplyr::mutate(dt=dplyr::with_tz(dt_utc, "Europe/Oslo")) %>%
+                       tidyr::as_tibble %>%
+                       dplyr::mutate(dt=lubridate::with_tz(dt_utc, "Europe/Oslo")) %>%
                        dplyr::select(dt, serial, temperature, noise) %>%
                        dplyr::mutate(dti=round_date(dt, "10 mins")) %>%
                        dplyr::select(-dt),
