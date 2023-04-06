@@ -1,6 +1,7 @@
 #'
 #' function to read in and manipulate Thelma DB
 #'
+#' @import data.table
 #' @param tbdb_file is the name of the thelma database
 #' @export
 
@@ -50,6 +51,8 @@ read_tb = function(tbdb_file) {
                      by=c("dti", "serial")) %>%
     dplyr::select(-.data$dti)
   list(d=dets)
+
+beepr::beep(2)
 
 }
 
