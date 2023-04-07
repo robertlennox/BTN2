@@ -102,7 +102,7 @@ creator<-function(meta, receivers, detections) {
     dplyr::rename(dti=.data$value)
 
   create_detections<-function(detections) {
-    detections %>%
+    dets<-detections %>%
       dplyr::left_join(m %>%
                          dplyr::mutate(ID=as.integer(ID)) %>%
                          dplyr::rename(Project=5) %>%
@@ -111,7 +111,7 @@ creator<-function(meta, receivers, detections) {
                                        Project, Transmitter, "Capture site", "Release Site"),
                        by="ID")}
 
-  return(create_detections)
+  return(dets)
 
 }
 
