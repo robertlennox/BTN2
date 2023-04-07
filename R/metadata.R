@@ -101,7 +101,6 @@ creator<-function(meta, receivers, detections) {
                   .data$depth, .data$sync, .data$lon, .data$lat) %>%
     dplyr::rename(dti=.data$value)
 
-  create_detections<-function(detections) {
     dets<-detections %>%
       dplyr::left_join(m %>%
                          dplyr::mutate(ID=as.integer(ID)) %>%
@@ -109,9 +108,8 @@ creator<-function(meta, receivers, detections) {
                          dplyr::select(ID, oid, dmy, sensor, Spp, TL, Angler,
                                        fate, fatedate,
                                        Project, Transmitter, "Capture site", "Release Site"),
-                       by="ID")}
-
-  return(dets)
+                       by="ID")
+    return(dets)
 
 }
 
