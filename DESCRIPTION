@@ -16,10 +16,10 @@ Imports:
     DBI,
     dplyr,
     ggplot2,
-    googlesheets4,
     lubridate,
     magrittr,
     RSQLite,
+    gsheet,
     beepr,
     sf,
     tidyr
