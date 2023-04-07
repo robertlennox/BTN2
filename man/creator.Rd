@@ -7,6 +7,8 @@
 \item{meta}{is an object brought in from the tagging metadata}
 
 \item{receivers}{is an object brought in from the receivers sheet}
+
+\item{detections}{is an object derived from the read_tb function}
 }
 \description{
 functions to get receiver and tagging metadata into session
