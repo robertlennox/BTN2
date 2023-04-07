@@ -1,7 +1,7 @@
 #'
 #' functions to get receiver and tagging metadata into session
 #'
-#' @name metadata
+#' @name creator
 #' @import data.table
 #' @import magrittr
 #' @import dplyr
