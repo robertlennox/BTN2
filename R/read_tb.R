@@ -55,7 +55,7 @@ read_tb = function(tbdb_file) {
   list(d=dets)
 
 beepr::beep(2)
-return(d)
+return(dets)
 
 }
 
