@@ -22,7 +22,7 @@ creator<-function(meta, receivers, detections) {
 
   m<-meta %>%
     dplyr::mutate(ID=as.numeric(.data$ID)) %>%
-    dplyr::distinct(Vendor, ID, n_ID) %>%
+    dplyr::distinct(.data$Vendor, .data$ID, .data$n_ID) %>%
     dplyr::mutate(n_ID=n_ID-1) %>%
     dplyr::mutate(ID2=dplyr::case_when(.data$n_ID==0 ~ NA_real_,
                                      .data$n_ID>0 ~ ID+1)) %>%
@@ -34,9 +34,9 @@ creator<-function(meta, receivers, detections) {
                                      T~NA_real_)) %>%
     dplyr::mutate(oid=.data$ID) %>%
     dplyr::select(-.data$n_ID) %>%
-    tidyr::gather(.data$key, .data$value, -.data$oid, -.data$Vendor) %>%
+    tidyr::gather(key, value, -oid, -Vendor) %>%
     dplyr::rename(ID=oid) %>%
-    dplyr:right_join(meta %>% dplyr::mutate(ID=as.numeric(.data$ID))) %>%
+    right_join(meta %>% mutate(ID=as.numeric(.data$ID))) %>%
     dplyr::mutate(key=case_when(grepl("-AT", .data$Transmitter) &
                                  value-ID==0 ~ "temp",
                                grepl("A-LP", .data$Transmitter) ~ "accel",
@@ -86,16 +86,17 @@ creator<-function(meta, receivers, detections) {
     sf::st_as_sf(., coords=c("lon", "lat")) %>%
     sf::st_set_crs(4326) %>%
     sf::st_transform(32633) %>%
-    sf::as(., "Spatial") %>%
-    tidyr::as_tibble %>%
-    dplyr::rename(lon=.data$coords.x1, lat=.data$coords.x2)
+    as(., "Spatial") %>%
+    as_tibble %>%
+    dplyr::rename(lon=coords.x1, lat=coords.x2)
 
   receiver_locations<-seq.Date(as.Date("2020-01-01"),
                                as.Date(Sys.Date()), by="day") %>%
     tidyr::expand_grid(., rec) %>%
     dplyr::mutate(end=dplyr::case_when(end=="" |
-                                        is.na(.data$end)~ Sys.Date(), T~dmy(.data$end))) %>%
-    dplyr::filter(value>lubridate::dmy(.data$start) & value<.data$end) %>%
+                                        is.na(.data$end)~ Sys.Date(), T~lubridate::dmy(.data$end))) %>%
+    dplyr::rename(value=1) %>%
+    dplyr::filter(.data$value>lubridate::dmy(.data$start) & .data$value<.data$end) %>%
     dplyr::select(.data$value, .data$Receiver, .data$Station, .data$Habitat,
                   .data$depth, .data$sync, .data$lon, .data$lat) %>%
     dplyr::rename(dti=.data$value)
@@ -104,6 +105,7 @@ creator<-function(meta, receivers, detections) {
     detections %>%
       dplyr::left_join(m %>%
                          dplyr::mutate(ID=as.integer(ID)) %>%
+                         dplyr::rename(Project=5) %>%
                          dplyr::select(ID, oid, dmy, sensor, Spp, TL, Angler,
                                        fate, fatedate,
                                        Project, Transmitter, "Capture site", "Release Site"),
