@@ -15,11 +15,9 @@ Imports:
     data.table,
     DBI,
     dplyr,
-    ggplot2,
     lubridate,
     magrittr,
     RSQLite,
-    gsheet,
     beepr,
     sf,
     tidyr

@@ -1,6 +1,7 @@
 #'
 #' functions to get receiver and tagging metadata into session
 #'
+#' @name metadata
 #' @import data.table
 #' @import magrittr
 #' @import dplyr
@@ -9,90 +10,98 @@
 #' @param receivers is an object brought in from the receivers sheet
 #' @export
 
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
+
 creator<-function(meta, receivers) {
+  ID <- n_ID <- key <- value <- Vendor <- Transmitter <- NULL
+  oid <- lon <- lat <- value <- start <- end <- NULL
+  Station <- Receiver <- Habitat <- dmy <- sensor <- Spp <- NULL
+  Angler <- Project <- fate <- fatedate <- TL <- NULL
+
 
   m<-meta %>%
-    dplyr::mutate(ID=as.numeric(ID)) %>%
-    dplyr:distinct(Vendor, ID, n_ID) %>%
-    dplyr:mutate(n_ID=n_ID-1) %>%
-    dplyr:mutate(ID2=dplyr:case_when(n_ID==0 ~ NA_real_,
-                                     n_ID>0 ~ ID+1)) %>%
-    dplyr: mutate(ID3=dplyr:case_when(n_ID>=2 ~ ID+2,
+    dplyr::mutate(ID=as.numeric(.data$ID)) %>%
+    dplyr::distinct(Vendor, ID, n_ID) %>%
+    dplyr::mutate(n_ID=n_ID-1) %>%
+    dplyr::mutate(ID2=dplyr::case_when(.data$n_ID==0 ~ NA_real_,
+                                     .data$n_ID>0 ~ ID+1)) %>%
+    dplyr::mutate(ID3=dplyr::case_when(.data$n_ID>=2 ~ .data$ID+2,
                                       T~NA_real_)) %>%
-    dplyr:mutate(ID4=dplyr:case_when(n_ID==3 ~ ID+3,
+    dplyr::mutate(ID4=dplyr::case_when(.data$n_ID==3 ~ .data$ID+3,
                                      T~NA_real_)) %>%
-    dplyr:mutate(ID3=dplyr:case_when(n_ID>=2 ~ ID+2,
+    dplyr::mutate(ID3=dplyr::case_when(.data$n_ID>=2 ~ .data$ID+2,
                                      T~NA_real_)) %>%
-    dplyr:mutate(oid=ID) %>%
-    dplyr::select(-n_ID) %>%
-    tidyr::gather(key, value, -oid, -Vendor) %>%
+    dplyr::mutate(oid=.data$ID) %>%
+    dplyr::select(-.data$n_ID) %>%
+    tidyr::gather(.data$key, .data$value, -.data$oid, -.data$Vendor) %>%
     dplyr::rename(ID=oid) %>%
-    dplyr:right_join(meta %>% dplyr:mutate(ID=as.numeric(ID))) %>%
-    dplyr:mutate(key=case_when(grepl("-AT", Transmitter) &
+    dplyr:right_join(meta %>% dplyr::mutate(ID=as.numeric(.data$ID))) %>%
+    dplyr::mutate(key=case_when(grepl("-AT", .data$Transmitter) &
                                  value-ID==0 ~ "temp",
-                               grepl("A-LP", Transmitter) ~ "accel",
-                               grepl("-AT", Transmitter) &
+                               grepl("A-LP", .data$Transmitter) ~ "accel",
+                               grepl("-AT", .data$Transmitter) &
                                  value-ID==1 ~ "accel",
-                               grepl("-DT", Transmitter) &
+                               grepl("-DT", .data$Transmitter) &
                                  value-ID==0 ~ "depth",
-                               grepl("-DT", Transmitter) &
+                               grepl("-DT", .data$Transmitter) &
                                  value-ID==1 ~ "temp",
-                               grepl("MT-", Transmitter) &
+                               grepl("MT-", .data$Transmitter) &
                                  value-ID==0 ~ "not eaten",
-                               grepl("MT-", Transmitter) &
+                               grepl("MT-", .data$Transmitter) &
                                  value-ID==1 ~ "eaten",
-                               grepl("MT-", Transmitter) &
+                               grepl("MT-", .data$Transmitter) &
                                  value-ID==2 ~ "temp",
-                               grepl("MT-", Transmitter) &
+                               grepl("MT-", .data$Transmitter) &
                                  value-ID==3 ~ "temp2",
-                               grepl("-T", Transmitter) &
+                               grepl("-T", .data$Transmitter) &
                                  value-ID==0 ~ "temp",
-                               grepl("-P", Transmitter) &
+                               grepl("-P", .data$Transmitter) &
                                  value-ID==0 ~ "not eaten",
-                               grepl("-P", Transmitter) &
+                               grepl("-P", .data$Transmitter) &
                                  value-ID==1 ~ "eaten",
-                               grepl("-ADT", Transmitter) &
+                               grepl("-ADT", .data$Transmitter) &
                                  value-ID==0 ~ "temp",
-                               grepl("-ADT", Transmitter) &
+                               grepl("-ADT", .data$Transmitter) &
                                  value-ID==1 ~ "accel",
-                               grepl("-ADT", Transmitter) &
+                               grepl("-ADT", .data$Transmitter) &
                                  value-ID==2 ~ "depth",
-                               grepl("-DAT", Transmitter) &
+                               grepl("-DAT", .data$Transmitter) &
                                  value-ID==0 ~ "depth",
-                               grepl("-DAT", Transmitter) &
+                               grepl("-DAT", .data$Transmitter) &
                                  value-ID==1 ~ "accel",
-                               grepl("-DAT", Transmitter) &
+                               grepl("-DAT", .data$Transmitter) &
                                  value-ID==2 ~ "temp",
-                               grepl("-R", Transmitter) &
+                               grepl("-R", .data$Transmitter) &
                                  value-ID==0 ~ "range",
-                               grepl("-D", Transmitter) &
+                               grepl("-D", .data$Transmitter) &
                                  value-ID==0 ~ "depth",
-                               !grepl("-", Transmitter)~"ID")) %>%
-    dplyr::filter(!is.na(key) | Vendor=="Vemco") %>%
-    dplyr::rename(sensor=key, oid=ID, ID=value)
+                               !grepl("-", .data$Transmitter)~"ID")) %>%
+    dplyr::filter(!is.na(.data$key) | .data$Vendor=="Vemco") %>%
+    dplyr::rename(sensor=.data$key, oid=.data$ID, ID=.data$value)
 
   rec<-receivers %>%
     as_tibble %>%
-    dplyr::filter(!is.na(lon)) %>%
-    st_as_sf(., coords=c("lon", "lat")) %>%
-    st_set_crs(4326) %>%
-    st_transform(32633) %>%
-    as(., "Spatial") %>%
-    as_tibble %>%
-    dplyr::rename(lon=coords.x1, lat=coords.x2)
+    dplyr::filter(!is.na(.data$lon)) %>%
+    sf::st_as_sf(., coords=c("lon", "lat")) %>%
+    sf::st_set_crs(4326) %>%
+    sf::st_transform(32633) %>%
+    sf::as(., "Spatial") %>%
+    tidyr::as_tibble %>%
+    dplyr::rename(lon=.data$coords.x1, lat=.data$coords.x2)
 
   receiver_locations<-seq.Date(as.Date("2020-01-01"),
                                as.Date(Sys.Date()), by="day") %>%
     tidyr::expand_grid(., rec) %>%
-    dplyr:mutate(end=dplyr::case_when(end=="" |
-                                        is.na(end)~ Sys.Date(), T~dmy(end))) %>%
-    dplyr::filter(value>lubridate::dmy(start) & value<end) %>%
-    dplyr::select(value, Receiver, Station, Habitat, depth, sync, lon, lat) %>%
-    dplyr::rename(dti=value)
+    dplyr::mutate(end=dplyr::case_when(end=="" |
+                                        is.na(.data$end)~ Sys.Date(), T~dmy(.data$end))) %>%
+    dplyr::filter(value>lubridate::dmy(.data$start) & value<.data$end) %>%
+    dplyr::select(.data$value, .data$Receiver, .data$Station, .data$Habitat,
+                  .data$depth, .data$sync, .data$lon, .data$lat) %>%
+    dplyr::rename(dti=.data$value)
 
   create_detections<-function(detections) {
     detections %>%
-      dplyr::left_join(meta %>%
+      dplyr::left_join(m %>%
                          dplyr::mutate(ID=as.integer(ID)) %>%
                          dplyr::select(ID, oid, dmy, sensor, Spp, TL, Angler,
                                        fate, fatedate,
