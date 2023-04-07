@@ -69,3 +69,21 @@ meta<-meta %>%
                              !grepl("-", Transmitter)~"ID")) %>%
   dplyr::filter(!is.na(key) | Vendor=="Vemco") %>%
   dplyr::rename(sensor=key, oid=ID, ID=value)
+
+receiver_locations<-seq.Date(as.Date("2020-01-01"),
+                             as.Date(Sys.Date()), by="day") %>%
+  tidyr::expand_grid(., rec) %>%
+  dplyr:mutate(end=dplyr::case_when(end=="" |
+                                      is.na(end)~ Sys.Date(), T~dmy(end))) %>%
+  dplyr::filter(value>lubridate::dmy(start) & value<end) %>%
+  dplyr::select(value, Receiver, Station, Habitat, depth, sync, lon, lat) %>%
+  dplyr::rename(dti=value)
+
+create_detections<-function(detections) {
+  detections %>%
+    dplyr::left_join(meta %>%
+                       dplyr::mutate(ID=as.integer(ID)) %>%
+                       dplyr::select(ID, oid, dmy, sensor, Spp, TL, Angler,
+                                     fate, fatedate,
+                                     Project, Transmitter, "Capture site", "Release Site"),
+                     by="ID")}
