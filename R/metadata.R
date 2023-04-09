@@ -102,7 +102,7 @@ creator<-function(meta, receivers, detections) {
     dplyr::rename(dti=.data$value, serial=.data$Receiver)
 
     dets<-detections %>%
-      dplyr::mutate(dti=lubridate::round_date(.data$dt)) %>%
+      dplyr::mutate(dti=lubridate::date(.data$dt)) %>%
       left_join(receiver_locations, by=c("serial", "dti")) %>%
       dplyr::left_join(m %>%
                          dplyr::mutate(ID=as.integer(ID)) %>%
