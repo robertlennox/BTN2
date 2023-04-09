@@ -1,3 +1,5 @@
 ## code to prepare `DATASET` dataset goes here
 
-usethis::use_data(DATASET, overwrite = TRUE)
+
+osterfjord<-sf::st_read("StudySite.shp")
+usethis::use_data(osterfjord, overwrite = TRUE)

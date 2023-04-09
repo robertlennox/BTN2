@@ -1,7 +1,7 @@
 #'
 #' functions to get receiver and tagging metadata into session
 #'
-#' @name creator
+#' @name smoltify
 #' @import data.table
 #' @import magrittr
 #' @import dplyr
@@ -13,7 +13,7 @@
 
 if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 
-creator<-function(meta, receivers, detections) {
+smoltify<-function(meta, receivers, detections) {
   ID <- n_ID <- key <- value <- Vendor <- Transmitter <- NULL
   oid <- lon <- lat <- value <- start <- end <- NULL
   Station <- Receiver <- Habitat <- dmy <- sensor <- Spp <- NULL
