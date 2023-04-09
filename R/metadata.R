@@ -99,9 +99,11 @@ creator<-function(meta, receivers, detections) {
     dplyr::filter(.data$value>lubridate::dmy(.data$start) & .data$value<.data$end) %>%
     dplyr::select(.data$value, .data$Receiver, .data$Station, .data$Habitat,
                   .data$depth, .data$sync, .data$lon, .data$lat) %>%
-    dplyr::rename(dti=.data$value)
+    dplyr::rename(dti=.data$value, serial=.data$Receiver)
 
     dets<-detections %>%
+      dplyr::mutate(dti=lubridate::round_date(.data$dt)) %>%
+      left_join(receiver_locations, by=c("serial", "dti")) %>%
       dplyr::left_join(m %>%
                          dplyr::mutate(ID=as.integer(ID)) %>%
                          dplyr::rename(Project=5) %>%
