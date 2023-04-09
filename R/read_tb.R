@@ -1,14 +1,19 @@
 #'
 #' function to read in and manipulate Thelma DB
 #'
+#' @name hatch
 #' @import data.table
 #' @import magrittr
 #' @import dplyr
 #' @import tidyr
 #' @param tbdb_file is the name of the thelma database
+#' @examples
+#' hatch(tbdb_file) where tbdb_file is the file path to a thelma database
+#' e.g. "PACE.tbdb"
+#'
 #' @export
 
-read_tb = function(tbdb_file) {
+hatch = function(tbdb_file) {
   tbrSerialNo <- tagID <- epo <- frac <- usTimestamp <- tagSNR <- NULL
   temperature <- tbrSerialNo <- ambientNoise <- ambientNoisePeak <- secTimestampUTC  <- NULL
   tagData <- dt_utc <- dt_sec_utc  <- NULL
