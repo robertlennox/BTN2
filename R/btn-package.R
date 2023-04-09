@@ -1,8 +1,6 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' importFrom data.table :=
-#' importFrom data.table .
-#' importFrom magrittr %>%
-
+## usethis namespace: start
+## usethis namespace: end
 NULL
